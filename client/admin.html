@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Velo Portal: админ</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="top solid">
+  <a class="logo" href="/" aria-label="Velo Portal"><b>VELO</b><i>PORTAL</i></a>
+  <button class="out" id="logout" type="button" hidden>Шығу</button>
+</header>
+<main class="pad adm">
+  <section id="login">
+    <h2>Админ кіру</h2>
+    <form id="loginForm">
+      <label>Email<input name="email" type="email" required autocomplete="username"></label>
+      <label>Құпия сөз<input name="password" type="password" required autocomplete="current-password"></label>
+      <button class="btn" type="submit">Кіру</button>
+    </form>
+    <p id="lmsg" class="err" role="alert"></p>
+  </section>
+  <section id="panel" hidden>
+    <div class="chips" id="tabs"></div>
+    <div id="pick" hidden><label for="compPick">Жарыс</label><select id="compPick"></select></div>
+    <p id="msg" role="alert"></p>
+    <div class="split"><div id="list"></div><form id="form"></form></div>
+  </section>
+</main>
+<script src="admin.js"></script>
+</body>
+</html>

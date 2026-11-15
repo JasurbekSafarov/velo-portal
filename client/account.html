@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Velo Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+<link rel="stylesheet" href="account.css">
+</head>
+<body>
+<header class="top solid">
+  <a class="logo" href="/" aria-label="Velo Portal"><b>VELO</b><i>PORTAL</i></a>
+  <button class="out" id="logout" type="button" hidden></button>
+</header>
+<main class="pad adm">
+  <section id="auth" class="narrow">
+    <div class="chips" id="tabs"></div>
+    <form id="form"></form>
+    <p id="err" class="err" role="alert"></p>
+  </section>
+  <section id="me" class="narrow" hidden>
+    <h2 id="meTitle"></h2>
+    <p id="meName"></p>
+    <p id="meMail" class="muted"></p>
+    <p id="meRole"></p>
+    <a id="adminLink" class="btn" href="admin.html" hidden></a>
+  </section>
+</main>
+<script src="account.js"></script>
+</body>
+</html>

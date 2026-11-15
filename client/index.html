@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Velo Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top" id="top">
+  <a class="logo" href="#top" aria-label="Velo Portal"><b>VELO</b><i>PORTAL</i></a>
+  <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false"><span></span></button>
+  <nav id="menu">
+    <div class="has-sub"><a href="#news" data-i18n="m_fed"></a>
+      <div class="sub"><a href="#news" data-i18n="m_news"></a><a href="#leaders" data-i18n="m_leaders"></a><a href="#partners" data-i18n="m_partners"></a></div></div>
+    <div class="has-sub"><a href="#disciplines" data-i18n="m_disc"></a><div class="sub" id="subDisc"></div></div>
+    <a href="#calendar" data-i18n="m_cal"></a>
+    <a href="#results" data-i18n="m_res"></a>
+    <a href="account.html" data-i18n="m_login"></a>
+    <span class="lang"><button type="button" data-lang="kz">KZ</button><button type="button" data-lang="ru">RU</button></span>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="slide on" style="--img:url(img/hero1.jpg)"><h1 class="title" data-i18n="hero1"></h1></div>
+    <div class="slide" style="--img:url(img/hero2.jpg);--g:linear-gradient(135deg,#17445f,#2c2c2c)"><div class="title" data-i18n="hero2"></div></div>
+    <div class="dots"><button type="button" aria-label="1"></button><button type="button" aria-label="2"></button></div>
+  </section>
+
+  <section class="tiles">
+    <a class="tile" href="#news" style="--img:url(img/tile1.jpg)"><h3 data-i18n="m_news"></h3><span data-i18n="open"></span></a>
+    <a class="tile" href="#results" style="--img:url(img/tile2.jpg)"><h3 data-i18n="m_res"></h3><span data-i18n="open"></span></a>
+    <a class="tile" href="#calendar" style="--img:url(img/tile3.jpg)"><h3 data-i18n="m_cal"></h3><span data-i18n="open"></span></a>
+  </section>
+
+  <section id="disciplines" class="pad"><h2 data-i18n="disc_title"></h2><div class="grid4" id="discGrid"></div></section>
+
+  <section id="calendar" class="pad light"><h2 data-i18n="cal_title"></h2><div class="chips" id="filters"></div><div id="compList"></div></section>
+
+  <section id="results" class="pad">
+    <h2 data-i18n="res_title"></h2>
+    <label for="compSelect" data-i18n="choose"></label>
+    <select id="compSelect"></select>
+    <div id="resTable"></div>
+  </section>
+
+  <section id="news" class="pad light"><h2 data-i18n="news_title"></h2><div class="grid3" id="newsList"></div></section>
+
+  <section id="leaders" class="pad"><h2 data-i18n="leaders_title"></h2><div class="grid4" id="leaderGrid"></div></section>
+
+  <section id="partners" class="pad light">
+    <h2 data-i18n="partners_title"></h2>
+    <p data-i18n="partners_text"></p>
+    <div class="logos"><div></div><div></div><div></div><div></div></div>
+  </section>
+</main>
+
+<footer>
+  <div class="social">
+    <a href="#"><i>f</i><span>FACEBOOK</span></a>
+    <a href="#"><i>ig</i><span>INSTAGRAM</span></a>
+    <a href="#"><i>yt</i><span>YOUTUBE</span></a>
+  </div>
+  <div class="cols">
+    <div><div class="logo"><b>VELO</b><i>PORTAL</i></div><p data-i18n="footer_copy"></p></div>
+    <div><h4 data-i18n="links"></h4><a href="#news" data-i18n="m_news"></a><a href="#calendar" data-i18n="m_cal"></a><a href="#results" data-i18n="m_res"></a></div>
+    <div><h4 data-i18n="contacts"></h4><p data-i18n="address"></p><p data-i18n="email"></p></div>
+  </div>
+</footer>
+<button id="toTop" type="button" hidden aria-label="Up">&#9650;</button>
+<script src="app.js"></script>
+</body>
+</html>
