@@ -4,30 +4,49 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Velo Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="admin.css">
 <link rel="stylesheet" href="account.css">
 </head>
-<body>
-<header class="top solid">
+<body class="acc">
+<div class="acc-bg" style="--img:url(img/account-bg.jpg)"></div>
+<header class="top">
   <a class="logo" href="/" aria-label="Velo Portal"><b>VELO</b><i>PORTAL</i></a>
   <button class="out" id="logout" type="button" hidden></button>
 </header>
-<main class="pad adm">
-  <section id="auth" class="narrow">
-    <div class="chips" id="tabs"></div>
-    <form id="form"></form>
-    <p id="err" class="err" role="alert"></p>
-  </section>
-  <section id="me" class="narrow" hidden>
-    <h2 id="meTitle"></h2>
-    <p id="meName"></p>
-    <p id="meMail" class="muted"></p>
-    <p id="meRole"></p>
-    <a id="adminLink" class="btn" href="admin.html" hidden></a>
+<main class="acc-main">
+  <div class="acc-intro" id="intro">
+    <h1 data-i18n="intro_title"></h1>
+    <p data-i18n="intro_text"></p>
+  </div>
+  <div class="panel" id="panel">
+    <div id="gate">
+      <h2 data-i18n="gate_title"></h2>
+      <div class="roles">
+        <button class="role" type="button" data-role="athlete"><b data-i18n="athlete"></b><span data-i18n="role_athlete_d"></span></button>
+        <button class="role" type="button" data-role="admin"><b data-i18n="admin"></b><span data-i18n="role_admin_d"></span></button>
+      </div>
+    </div>
+    <div id="auth" hidden>
+      <h2 id="authTitle"></h2>
+      <div class="chips" id="tabs"></div>
+      <form id="form"></form>
+      <p class="hint" id="adminNote" data-i18n="admin_note" hidden></p>
+      <p class="err" id="err" role="alert"></p>
+      <button class="link" id="back" type="button" data-i18n="change_role"></button>
+    </div>
+  </div>
+  <section id="me" hidden>
+    <div class="profile">
+      <div class="avatar" id="avatar"></div>
+      <div><h1 id="meName"></h1><p id="meMail"></p><span class="badge" id="meRole"></span></div>
+    </div>
+    <div class="cards" id="cards"></div>
   </section>
 </main>
+<script src="transition.js"></script>
 <script src="account.js"></script>
 </body>
 </html>

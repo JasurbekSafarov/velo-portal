@@ -3,7 +3,8 @@ const DISC = ['road', 'track', 'mtb', 'bmx'];
 const T = {
   kz: {
     m_fed: 'Федерация', m_news: 'Жаңалықтар', m_leaders: 'Басшылық', m_partners: 'Серіктестер',
-    m_disc: 'Дисциплина', m_cal: 'Күнтізбе', m_res: 'Нәтижелер', m_login: 'Кіру', m_cabinet: 'Кабинет',
+    m_disc: 'Дисциплина', m_cal: 'Күнтізбе', m_res: 'Нәтижелер', m_login: 'Кіру', m_cabinet: 'Кабинет', band: 'Әр жарыс — жаңа жол',
+    st_comps: 'Жарыс', st_results: 'Нәтиже жазбасы', st_news: 'Жаңалық', st_disc: 'Бағыт',
     hero1: 'Қазақстан велоспорты бір жерде', hero2: 'Жарысқа дайынсың ба?', open: 'ашу',
     disc_title: 'Велоспорт бағыттары', cal_title: 'Жарыс күнтізбесі', res_title: 'Нәтижелер',
     news_title: 'Соңғы жаңалықтар', leaders_title: 'Басшылық', partners_title: 'Серіктестер',
@@ -20,7 +21,8 @@ const T = {
   },
   ru: {
     m_fed: 'Федерация', m_news: 'Новости', m_leaders: 'Руководство', m_partners: 'Партнёры',
-    m_disc: 'Дисциплины', m_cal: 'Календарь', m_res: 'Результаты', m_login: 'Войти', m_cabinet: 'Кабинет',
+    m_disc: 'Дисциплины', m_cal: 'Календарь', m_res: 'Результаты', m_login: 'Войти', m_cabinet: 'Кабинет', band: 'Каждый старт — новая дорога',
+    st_comps: 'Стартов', st_results: 'Записей результатов', st_news: 'Новостей', st_disc: 'Направления',
     hero1: 'Велоспорт Казахстана в одном месте', hero2: 'Готов к старту?', open: 'открыть',
     disc_title: 'Направления велоспорта', cal_title: 'Календарь стартов', res_title: 'Результаты',
     news_title: 'Последние новости', leaders_title: 'Руководство', partners_title: 'Партнёры',
@@ -190,6 +192,7 @@ function applyStatic() {
 
 function renderAll() {
   renderDisc(); renderFilters(); renderComps(); renderSelect(); renderResults(); renderNews(); renderLeaders();
+  reveal();
 }
 
 // language
@@ -218,6 +221,11 @@ auto();
 function onScroll() {
   $('top').classList.toggle('solid', scrollY > 40);
   $('toTop').hidden = scrollY < 500;
+  const max = document.documentElement.scrollHeight - innerHeight;
+  $('progress').style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.style.setProperty('--py', Math.round(scrollY * 0.25) + 'px');
+  }
 }
 addEventListener('scroll', onScroll, { passive: true });
 onScroll();
@@ -227,6 +235,50 @@ $('burger').onclick = () => {
 };
 $('menu').addEventListener('click', (e) => { if (e.target.closest('a')) $('menu').classList.remove('open'); });
 $('toTop').onclick = () => scrollTo({ top: 0 });
+
+// scroll reveal: blocks fade and rise into place as they enter the screen
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const io = 'IntersectionObserver' in window
+  ? new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }), { threshold: 0.12 })
+  : null;
+function reveal() {
+  if (REDUCED || !io) return;
+  document.querySelectorAll('main h2, .row, .card, .disc, .leader, .tile, .logos div, .band p, .stats div').forEach((n) => {
+    if (n.dataset.r) return;
+    n.dataset.r = '1';
+    n.style.setProperty('--i', Math.min([...n.parentElement.children].indexOf(n), 6));
+    n.classList.add('reveal');
+    io.observe(n);
+  });
+}
+
+// stats: numbers count up when they scroll into view
+const countIO = 'IntersectionObserver' in window
+  ? new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { countUp(e.target); countIO.unobserve(e.target); }
+    }), { threshold: 0.5 })
+  : null;
+function countUp(b) {
+  const to = Number(b.dataset.to), start = performance.now(), dur = 1400;
+  (function tick(now) {
+    const p = Math.min((now - start) / dur, 1);
+    b.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+    if (p < 1) requestAnimationFrame(tick);
+  })(start);
+}
+async function startStats() {
+  const results = await api('/results').then((r) => r.length).catch(() => null);
+  const vals = { comps: S.comps.length, results, news: S.news.length, disc: DISC.length };
+  document.querySelectorAll('[data-count]').forEach((b) => {
+    const to = vals[b.dataset.count];
+    if (S.error || to == null) { b.textContent = '–'; return; }
+    b.dataset.to = to;
+    if (REDUCED || !countIO) b.textContent = to;
+    else countIO.observe(b);
+  });
+}
 
 // header: "Кіру" becomes "Кабинет" when the visitor is signed in
 async function checkSession() {
@@ -254,5 +306,7 @@ async function init() {
   if (past) $('compSelect').value = past._id;
   $('compSelect').onchange = loadResults;
   await loadResults();
+  reveal();
+  startStats();
 }
 init();
