@@ -5,6 +5,7 @@ const T = {
     m_fed: 'Федерация', m_news: 'Жаңалықтар', m_leaders: 'Басшылық', m_partners: 'Серіктестер',
     m_disc: 'Дисциплина', m_cal: 'Күнтізбе', m_res: 'Нәтижелер', m_login: 'Кіру', m_cabinet: 'Кабинет', band: 'Әр жарыс — жаңа жол',
     st_comps: 'Жарыс', st_results: 'Нәтиже жазбасы', st_news: 'Жаңалық', st_disc: 'Бағыт',
+    cal_next: 'Жақын жарыс', cal_none: 'Бұл күні жарыс жоқ', cal_more: 'Толығырақ', cal_prev: 'Алдыңғы ай', cal_nextm: 'Келесі ай',
     hero1: 'Қазақстан велоспорты бір жерде', hero2: 'Жарысқа дайынсың ба?', open: 'ашу',
     disc_title: 'Велоспорт бағыттары', cal_title: 'Жарыс күнтізбесі', res_title: 'Нәтижелер',
     news_title: 'Соңғы жаңалықтар', leaders_title: 'Басшылық', partners_title: 'Серіктестер',
@@ -23,6 +24,7 @@ const T = {
     m_fed: 'Федерация', m_news: 'Новости', m_leaders: 'Руководство', m_partners: 'Партнёры',
     m_disc: 'Дисциплины', m_cal: 'Календарь', m_res: 'Результаты', m_login: 'Войти', m_cabinet: 'Кабинет', band: 'Каждый старт — новая дорога',
     st_comps: 'Стартов', st_results: 'Записей результатов', st_news: 'Новостей', st_disc: 'Направления',
+    cal_next: 'Ближайший старт', cal_none: 'В этот день стартов нет', cal_more: 'Подробнее', cal_prev: 'Предыдущий месяц', cal_nextm: 'Следующий месяц',
     hero1: 'Велоспорт Казахстана в одном месте', hero2: 'Готов к старту?', open: 'открыть',
     disc_title: 'Направления велоспорта', cal_title: 'Календарь стартов', res_title: 'Результаты',
     news_title: 'Последние новости', leaders_title: 'Руководство', partners_title: 'Партнёры',
@@ -40,7 +42,7 @@ const T = {
 };
 const LEADERS = ['role_president', 'role_vp', 'role_sec', 'role_judge'];
 
-const S = { lang: localStorage.getItem('lang') || 'kz', disc: '', news: [], comps: [], results: [], error: false, signed: false };
+const S = { lang: localStorage.getItem('lang') || 'kz', disc: '', news: [], comps: [], results: [], error: false, signed: false, cal: null, sel: '' };
 const $ = (id) => document.getElementById(id);
 const t = (k) => T[S.lang][k];
 const tr = (o) => (o && (o[S.lang] || o.kz)) || '';
@@ -89,6 +91,7 @@ function renderFilters() {
 }
 
 function renderComps() {
+  renderCalendar();
   const box = $('compList');
   box.replaceChildren();
   if (S.error) return box.append(el('p', 'note', t('error')));
@@ -102,7 +105,11 @@ function renderComps() {
     meta.append(el('span', 'tag', t(c.discipline)));
     if (c.location) meta.append(el('span', 'muted', c.location));
     const body = el('div');
-    body.append(el('h3', null, tr(c.title)), meta);
+    const h = el('h3');
+    const link = el('a', null, tr(c.title));
+    link.href = 'competition.html?id=' + c._id;
+    h.append(link);
+    body.append(h, meta);
     row.append(date, body);
     box.append(row);
   });
@@ -245,12 +252,86 @@ const io = 'IntersectionObserver' in window
   : null;
 function reveal() {
   if (REDUCED || !io) return;
-  document.querySelectorAll('main h2, .row, .card, .disc, .leader, .tile, .logos div, .band p, .stats div').forEach((n) => {
+  document.querySelectorAll('main h2, .row, .card, .disc, .leader, .tile, .logos div, .band p, .stats div, .cal').forEach((n) => {
     if (n.dataset.r) return;
     n.dataset.r = '1';
     n.style.setProperty('--i', Math.min([...n.parentElement.children].indexOf(n), 6));
     n.classList.add('reveal');
     io.observe(n);
+  });
+}
+
+// calendar: month grid, days with competitions are highlighted and clickable
+const pad2 = (n) => String(n).padStart(2, '0');
+const todayKey = () => { const n = new Date(); return `${n.getFullYear()}-${pad2(n.getMonth() + 1)}-${pad2(n.getDate())}`; };
+function eventsByDay() {
+  const map = {};
+  S.comps.filter((c) => !S.disc || c.discipline === S.disc).forEach((c) => { (map[c.date.slice(0, 10)] ||= []).push(c); });
+  return map;
+}
+function shiftMonth(dm) {
+  const d = new Date(Date.UTC(S.cal.y, S.cal.m + dm, 1));
+  S.cal = { y: d.getUTCFullYear(), m: d.getUTCMonth() };
+  renderCalendar();
+}
+function renderCalendar() {
+  const box = $('cal');
+  box.replaceChildren();
+  if (!S.cal) { const n = new Date(); S.cal = { y: n.getFullYear(), m: n.getMonth() }; }
+  const { y, m } = S.cal, loc = S.lang === 'kz' ? 'kk-KZ' : 'ru-RU', ev = eventsByDay(), today = todayKey();
+  const head = el('div', 'cal-head');
+  const prev = el('button', null, '‹');
+  prev.type = 'button';
+  prev.setAttribute('aria-label', t('cal_prev'));
+  prev.onclick = () => shiftMonth(-1);
+  const next = el('button', null, '›');
+  next.type = 'button';
+  next.setAttribute('aria-label', t('cal_nextm'));
+  next.onclick = () => shiftMonth(1);
+  head.append(prev, el('b', null, new Date(Date.UTC(y, m, 1)).toLocaleDateString(loc, { month: 'long', year: 'numeric', timeZone: 'UTC' })), next);
+  const grid = el('div', 'cal-grid');
+  for (let i = 0; i < 7; i++) grid.append(el('span', 'wd', new Date(Date.UTC(2024, 0, 1 + i)).toLocaleDateString(loc, { weekday: 'short', timeZone: 'UTC' })));
+  const offset = (new Date(Date.UTC(y, m, 1)).getUTCDay() + 6) % 7;
+  for (let i = 0; i < offset; i++) grid.append(el('span'));
+  const days = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+  for (let d = 1; d <= days; d++) {
+    const key = `${y}-${pad2(m + 1)}-${pad2(d)}`;
+    const b = el('button', 'day' + (ev[key] ? ' has' : '') + (key === today ? ' today' : '') + (key === S.sel ? ' sel' : ''), String(d));
+    b.type = 'button';
+    if (ev[key]) b.onclick = () => { S.sel = key; renderCalendar(); };
+    else b.disabled = true;
+    grid.append(b);
+  }
+  box.append(head, grid);
+  renderDayPanel();
+}
+function renderDayPanel() {
+  const box = $('dayPanel');
+  box.replaceChildren();
+  const ev = eventsByDay();
+  let list, upcoming = false;
+  if (S.sel && ev[S.sel]) {
+    list = ev[S.sel];
+  } else {
+    const k = Object.keys(ev).sort().find((x) => x >= todayKey());
+    if (!k) return box.append(el('p', 'note', S.error ? t('error') : t('cal_none')));
+    list = ev[k];
+    upcoming = true;
+  }
+  if (upcoming) box.append(el('p', 'muted', t('cal_next')));
+  list.forEach((c) => {
+    const card = el('article', 'evt');
+    const meta = el('p', 'meta');
+    meta.append(el('span', 'tag', t(c.discipline)));
+    if (c.location) meta.append(el('span', 'muted', c.location));
+    const h = el('h3');
+    const link = el('a', null, tr(c.title));
+    link.href = 'competition.html?id=' + c._id;
+    h.append(link);
+    const more = el('a', 'more', t('cal_more'));
+    more.href = link.href;
+    card.append(el('span', 'pill', fmt(c.date, { day: 'numeric', month: 'long', year: 'numeric' })), h, meta, more);
+    box.append(card);
   });
 }
 

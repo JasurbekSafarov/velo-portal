@@ -118,3 +118,38 @@ body{animation:pagein .45s ease both}
 body.leaving{opacity:0;transition:opacity .22s ease}
 @keyframes pagein{from{opacity:0}}
 @media(prefers-reduced-motion:reduce){body{animation:none}}
+
+/* competition calendar + detail page */
+.calwrap{display:grid;grid-template-columns:minmax(300px,460px) 1fr;gap:32px;align-items:start;margin-bottom:48px}
+.cal{padding:24px;background:linear-gradient(160deg,#2b4a5a,#3a3a3a);color:#fff}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cal-head b{font:800 1.4rem 'Roboto Condensed',sans-serif;text-transform:uppercase}
+.cal-head button{width:40px;height:40px;border:1px solid rgba(255,255,255,.4);border-radius:50%;background:none;color:#fff;font-size:1.4rem;line-height:1;cursor:pointer}
+.cal-head button:hover{border-color:var(--cyan);color:var(--cyan)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.wd{text-align:center;color:#9fb0b8;font-size:.85rem;text-transform:uppercase}
+.day{aspect-ratio:1;border:1px solid rgba(255,255,255,.28);border-radius:50%;background:none;color:#fff;font:500 1rem Roboto,sans-serif}
+.day:disabled{color:rgba(255,255,255,.5);cursor:default}
+.day.has{border-color:var(--cyan);background:var(--cyan);font-weight:700;cursor:pointer;transition:transform .2s}
+.day.has:hover{transform:scale(1.1)}
+.day.today{box-shadow:0 0 0 2px #fff inset}
+.day.sel{border-color:#fff;background:#fff;color:var(--dark)}
+.evt{padding:22px;background:#fff;border-left:4px solid var(--cyan);animation:evtin .4s ease both}
+.evt+.evt{margin-top:14px}
+@keyframes evtin{from{opacity:0;transform:translateY(12px)}}
+.pill{display:inline-block;margin-bottom:12px;padding:4px 14px;border-radius:999px;background:var(--cyan);color:#fff;font-weight:500}
+.evt h3 a{text-decoration:underline;text-underline-offset:4px}
+.evt h3 a:hover,.row h3 a:hover{color:var(--cyan)}
+.more{display:inline-block;margin-top:14px;padding:8px 20px;border:1px solid var(--dark);font:700 .95rem 'Roboto Condensed',sans-serif;text-transform:uppercase}
+.more:hover{background:var(--dark);color:#fff}
+.dmain{min-height:80vh;padding:120px var(--pad) 72px}
+.back{display:inline-block;margin-bottom:28px;color:var(--muted)}
+.back:hover{color:var(--cyan)}
+.dmain h1{margin:14px 0 20px;font-size:clamp(2.4rem,6vw,4.4rem);font-weight:800;text-transform:uppercase}
+.dfacts{display:flex;flex-wrap:wrap;gap:12px 40px;margin-bottom:24px}
+.dfacts div{display:grid}
+.dfacts span{color:var(--muted);font-size:.9rem}
+.dfacts b{font:700 1.3rem 'Roboto Condensed',sans-serif}
+.dmain h2{margin-top:48px}
+@media(max-width:900px){.calwrap{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.evt{animation:none}}
